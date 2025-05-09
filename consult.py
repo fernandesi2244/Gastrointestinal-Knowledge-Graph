@@ -2,9 +2,12 @@ import subprocess
 from typing import List
 from dataclasses import dataclass
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from huggingface_hub import login
 import torch
+from dotenv import load_dotenv
+import os
 
-LLAMA4_MODEL_ID = "meta-llama/Llama-4-Scout-17B-16E-Instruct"
+LLAMA4_MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MAX_LENGTH = 2048
 TEMPERATURE = 0.2 # TODO: prob experiment with this a bit
@@ -125,7 +128,15 @@ class GICancerChatbot:
             response = self.generate_response(user_input)
             print(f"\n🤖 Assistant: {response}")
 
-def main():    
+def main():
+    load_dotenv()
+    access_token = os.getenv('HUGGING_FACE_ACCESS_TOKEN')
+    print('Access token:', access_token)
+    if access_token is None:
+        print("Error: HUGGING_FACE_ACCESS_TOKEN not found in environment variables.")
+        return
+    login(token=access_token)
+    
     chatbot = GICancerChatbot()
     chatbot.run_cli()
 
