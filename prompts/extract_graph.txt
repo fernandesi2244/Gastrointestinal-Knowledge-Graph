@@ -25,91 +25,140 @@ For each pair of related entities, extract the following information:
 -Examples-
 ######################
 Example 1:
-Entity_types: ORGANIZATION,PERSON
+Entity_types: CANCER,SYMPTOM,TREATMENT,PREVENTATIVE-MEASURE,RISK-FACTOR
 Text:
-The Verdantis's Central Institution is scheduled to meet on Monday and Thursday, with the institution planning to release its latest policy decision on Thursday at 1:30 p.m. PDT, followed by a press conference where Central Institution Chair Martin Smith will take questions. Investors expect the Market Strategy Committee to hold its benchmark interest rate steady in a range of 3.5%-3.75%.
+Esophageal cancer is primarily categorized into squamous cell carcinoma and adenocarcinoma. Chronic acid reflux, obesity, and smoking are key risk factors, particularly for adenocarcinoma. Patients often present with progressive dysphagia and chest pain. Treatment may include esophagectomy, radiation therapy, and endoscopic mucosal resection. Lifestyle modifications like weight loss and avoiding tobacco are advised for prevention.
 ######################
 Output:
-("entity"{tuple_delimiter}CENTRAL INSTITUTION{tuple_delimiter}ORGANIZATION{tuple_delimiter}The Central Institution is the Federal Reserve of Verdantis, which is setting interest rates on Monday and Thursday)
+("entity"{tuple_delimiter}ESOPHAGEAL CANCER{tuple_delimiter}CANCER{tuple_delimiter}A malignancy of the esophagus, including squamous cell carcinoma and adenocarcinoma types)
 {record_delimiter}
-("entity"{tuple_delimiter}MARTIN SMITH{tuple_delimiter}PERSON{tuple_delimiter}Martin Smith is the chair of the Central Institution)
+("entity"{tuple_delimiter}SQUAMOUS CELL CARCINOMA{tuple_delimiter}CANCER{tuple_delimiter}A type of esophageal cancer originating from the squamous cells lining the esophagus)
 {record_delimiter}
-("entity"{tuple_delimiter}MARKET STRATEGY COMMITTEE{tuple_delimiter}ORGANIZATION{tuple_delimiter}The Central Institution committee makes key decisions about interest rates and the growth of Verdantis's money supply)
+("entity"{tuple_delimiter}ADENOCARCINOMA{tuple_delimiter}CANCER{tuple_delimiter}A subtype of esophageal cancer typically arising in the lower esophagus, often linked to GERD)
 {record_delimiter}
-("relationship"{tuple_delimiter}MARTIN SMITH{tuple_delimiter}CENTRAL INSTITUTION{tuple_delimiter}Martin Smith is the Chair of the Central Institution and will answer questions at a press conference{tuple_delimiter}9)
+("entity"{tuple_delimiter}CHRONIC ACID REFLUX{tuple_delimiter}RISK-FACTOR{tuple_delimiter}Long-term GERD that increases the risk of esophageal adenocarcinoma)
+{record_delimiter}
+("entity"{tuple_delimiter}OBESITY{tuple_delimiter}RISK-FACTOR{tuple_delimiter}Excess body weight increases intra-abdominal pressure and risk for GERD and esophageal cancer)
+{record_delimiter}
+("entity"{tuple_delimiter}SMOKING{tuple_delimiter}RISK-FACTOR{tuple_delimiter}Major environmental risk factor for both types of esophageal cancer)
+{record_delimiter}
+("entity"{tuple_delimiter}DYSPHAGIA{tuple_delimiter}SYMPTOM{tuple_delimiter}Difficulty swallowing, often progressive, commonly seen in esophageal cancer)
+{record_delimiter}
+("entity"{tuple_delimiter}CHEST PAIN{tuple_delimiter}SYMPTOM{tuple_delimiter}Pain in the chest due to tumor invasion or compression in esophageal cancer)
+{record_delimiter}
+("entity"{tuple_delimiter}ESOPHAGECTOMY{tuple_delimiter}TREATMENT{tuple_delimiter}Surgical removal of part or all of the esophagus, used in cancer management)
+{record_delimiter}
+("entity"{tuple_delimiter}RADIATION THERAPY{tuple_delimiter}TREATMENT{tuple_delimiter}High-energy radiation used to destroy cancer cells in the esophagus)
+{record_delimiter}
+("entity"{tuple_delimiter}ENDOSCOPIC MUCOSAL RESECTION{tuple_delimiter}TREATMENT{tuple_delimiter}A minimally invasive procedure to remove early-stage esophageal tumors)
+{record_delimiter}
+("entity"{tuple_delimiter}WEIGHT LOSS{tuple_delimiter}PREVENTATIVE-MEASURE{tuple_delimiter}Reducing obesity helps lower the risk of acid reflux and esophageal adenocarcinoma)
+{record_delimiter}
+("entity"{tuple_delimiter}AVOIDING TOBACCO{tuple_delimiter}PREVENTATIVE-MEASURE{tuple_delimiter}Eliminating smoking lowers risk for squamous cell and adenocarcinoma types)
+{record_delimiter}
+("relationship"{tuple_delimiter}CHRONIC ACID REFLUX{tuple_delimiter}ADENOCARCINOMA{tuple_delimiter}Chronic GERD promotes metaplastic changes leading to adenocarcinoma{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}OBESITY{tuple_delimiter}CHRONIC ACID REFLUX{tuple_delimiter}Obesity increases reflux, which is a cause of adenocarcinoma{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}DYSPHAGIA{tuple_delimiter}ESOPHAGEAL CANCER{tuple_delimiter}Dysphagia is a hallmark symptom of esophageal tumors obstructing the lumen{tuple_delimiter}8)
 {completion_delimiter}
 
 ######################
 Example 2:
-Entity_types: ORGANIZATION
+Entity_types: CANCER,RISK-FACTOR,SYMPTOM,TREATMENT,PREVENTATIVE-MEASURE
 Text:
-TechGlobal's (TG) stock skyrocketed in its opening day on the Global Exchange Thursday. But IPO experts warn that the semiconductor corporation's debut on the public markets isn't indicative of how other newly listed companies may perform.
+Anal cancer is a relatively rare malignancy that occurs in the tissues of the anus. Human papillomavirus (HPV) infection, especially with high-risk strains like HPV-16, is a major risk factor. Other contributing risk factors include a history of receptive anal intercourse, immunosuppression, and smoking. Symptoms can include rectal bleeding, anal pain, and a palpable mass.
 
-TechGlobal, a formerly public company, was taken private by Vision Holdings in 2014. The well-established chip designer says it powers 85% of premium smartphones.
+Treatment options often involve a combination of radiation therapy and chemotherapy. The HPV vaccine has been shown to be effective in preventing infection with high-risk HPV types and may reduce the risk of anal cancer.
 ######################
 Output:
-("entity"{tuple_delimiter}TECHGLOBAL{tuple_delimiter}ORGANIZATION{tuple_delimiter}TechGlobal is a stock now listed on the Global Exchange which powers 85% of premium smartphones)
+("entity"{tuple_delimiter}ANAL CANCER{tuple_delimiter}CANCER{tuple_delimiter}A rare malignancy occurring in the tissues of the anus, often associated with HPV infection)  
 {record_delimiter}
-("entity"{tuple_delimiter}VISION HOLDINGS{tuple_delimiter}ORGANIZATION{tuple_delimiter}Vision Holdings is a firm that previously owned TechGlobal)
+("entity"{tuple_delimiter}HUMAN PAPILLOMAVIRUS (HPV){tuple_delimiter}RISK-FACTOR{tuple_delimiter}A virus, particularly high-risk types like HPV-16, strongly associated with anal cancer)  
 {record_delimiter}
-("relationship"{tuple_delimiter}TECHGLOBAL{tuple_delimiter}VISION HOLDINGS{tuple_delimiter}Vision Holdings formerly owned TechGlobal from 2014 until present{tuple_delimiter}5)
+("entity"{tuple_delimiter}RECEPTIVE ANAL INTERCOURSE{tuple_delimiter}RISK-FACTOR{tuple_delimiter}A behavioral risk factor increasing exposure to HPV and risk of anal cancer)  
+{record_delimiter}
+("entity"{tuple_delimiter}IMMUNOSUPPRESSION{tuple_delimiter}RISK-FACTOR{tuple_delimiter}Weakened immune function increases susceptibility to HPV-related malignancies like anal cancer)  
+{record_delimiter}
+("entity"{tuple_delimiter}SMOKING{tuple_delimiter}RISK-FACTOR{tuple_delimiter}Environmental factor that contributes to cellular mutations increasing cancer risk)  
+{record_delimiter}
+("entity"{tuple_delimiter}RECTAL BLEEDING{tuple_delimiter}SYMPTOM{tuple_delimiter}Common early symptom of anal cancer involving bleeding from the anus)  
+{record_delimiter}
+("entity"{tuple_delimiter}ANAL PAIN{tuple_delimiter}SYMPTOM{tuple_delimiter}Pain or discomfort in the anal region, often associated with tumors or inflammation)  
+{record_delimiter}
+("entity"{tuple_delimiter}PALPABLE MASS{tuple_delimiter}SYMPTOM{tuple_delimiter}A noticeable growth or lump near the anus, often indicative of tumor presence)  
+{record_delimiter}
+("entity"{tuple_delimiter}RADIATION THERAPY{tuple_delimiter}TREATMENT{tuple_delimiter}Use of high-energy rays to kill or shrink cancer cells in the anal region)  
+{record_delimiter}
+("entity"{tuple_delimiter}CHEMOTHERAPY{tuple_delimiter}TREATMENT{tuple_delimiter}Systemic treatment with cytotoxic drugs to target cancer cells)  
+{record_delimiter}
+("entity"{tuple_delimiter}HPV VACCINE{tuple_delimiter}PREVENTATIVE-MEASURE{tuple_delimiter}Vaccine targeting high-risk HPV types, shown to reduce risk of anal and cervical cancer)  
+{record_delimiter}
+("relationship"{tuple_delimiter}HUMAN PAPILLOMAVIRUS (HPV){tuple_delimiter}ANAL CANCER{tuple_delimiter}High-risk HPV types are the leading cause of anal cancer{tuple_delimiter}9)  
+{record_delimiter}
+("relationship"{tuple_delimiter}RECEPTIVE ANAL INTERCOURSE{tuple_delimiter}HUMAN PAPILLOMAVIRUS (HPV){tuple_delimiter}Receptive anal intercourse increases the likelihood of acquiring HPV infection{tuple_delimiter}7)  
+{record_delimiter}
+("relationship"{tuple_delimiter}IMMUNOSUPPRESSION{tuple_delimiter}ANAL CANCER{tuple_delimiter}Immunosuppressed individuals have higher risk of persistent HPV infection and cancer progression{tuple_delimiter}8)  
+{record_delimiter}
+("relationship"{tuple_delimiter}HPV VACCINE{tuple_delimiter}HUMAN PAPILLOMAVIRUS (HPV){tuple_delimiter}The HPV vaccine prevents infection by high-risk HPV strains{tuple_delimiter}9)  
+{record_delimiter}
+("relationship"{tuple_delimiter}HPV VACCINE{tuple_delimiter}ANAL CANCER{tuple_delimiter}By preventing HPV infection, the HPV vaccine reduces the risk of anal cancer{tuple_delimiter}8)  
+{record_delimiter}
+("relationship"{tuple_delimiter}RECTAL BLEEDING{tuple_delimiter}ANAL CANCER{tuple_delimiter}Rectal bleeding is a common early sign of anal cancer{tuple_delimiter}8)  
+{record_delimiter}
+("relationship"{tuple_delimiter}RADIATION THERAPY{tuple_delimiter}ANAL CANCER{tuple_delimiter}Radiation therapy is a standard treatment for local control of anal tumors{tuple_delimiter}7)  
 {completion_delimiter}
 
 ######################
 Example 3:
-Entity_types: ORGANIZATION,GEO,PERSON
+Entity_types: CANCER, RISK-FACTOR, CAUSE, SYMPTOM, TREATMENT, PREVENTATIVE-MEASURE
 Text:
-Five Aurelians jailed for 8 years in Firuzabad and widely regarded as hostages are on their way home to Aurelia.
+Bile duct cancer, or cholangiocarcinoma, is a rare but aggressive malignancy that forms in the bile ducts, which transport bile from the liver to the small intestine.
 
-The swap orchestrated by Quintara was finalized when $8bn of Firuzi funds were transferred to financial institutions in Krohaara, the capital of Quintara.
+Risk factors include primary sclerosing cholangitis, chronic liver disease, and liver fluke infections.
 
-The exchange initiated in Firuzabad's capital, Tiruzia, led to the four men and one woman, who are also Firuzi nationals, boarding a chartered flight to Krohaara.
+Common symptoms are jaundice, pruritus, and pale stools. Treatments include surgical resection, liver transplantation in select cases, and adjuvant chemotherapy.
 
-They were welcomed by senior Aurelian officials and are now on their way to Aurelia's capital, Cashion.
-
-The Aurelians include 39-year-old businessman Samuel Namara, who has been held in Tiruzia's Alhamia Prison, as well as journalist Durke Bataglani, 59, and environmentalist Meggie Tazbah, 53, who also holds Bratinas nationality.
+Avoiding liver fluke exposure and managing underlying liver conditions are considered preventative measures.
 ######################
 Output:
-("entity"{tuple_delimiter}FIRUZABAD{tuple_delimiter}GEO{tuple_delimiter}Firuzabad held Aurelians as hostages)
+("entity"{tuple_delimiter}BILE DUCT CANCER{tuple_delimiter}CANCER{tuple_delimiter}Also known as cholangiocarcinoma, a rare malignancy of the bile ducts that is aggressive and often diagnosed late)  
 {record_delimiter}
-("entity"{tuple_delimiter}AURELIA{tuple_delimiter}GEO{tuple_delimiter}Country seeking to release hostages)
+("entity"{tuple_delimiter}PRIMARY SCLEROSING CHOLANGITIS{tuple_delimiter}RISK-FACTOR{tuple_delimiter}A chronic liver disease that causes inflammation and scarring of the bile ducts, increasing cancer risk)  
 {record_delimiter}
-("entity"{tuple_delimiter}QUINTARA{tuple_delimiter}GEO{tuple_delimiter}Country that negotiated a swap of money in exchange for hostages)
+("entity"{tuple_delimiter}CHRONIC LIVER DISEASE{tuple_delimiter}RISK-FACTOR{tuple_delimiter}Long-term liver damage that elevates the risk of bile duct malignancies)  
 {record_delimiter}
+("entity"{tuple_delimiter}LIVER FLUKE INFECTIONS{tuple_delimiter}CAUSE{tuple_delimiter}Parasitic infections endemic to some regions that directly cause chronic inflammation in bile ducts)  
 {record_delimiter}
-("entity"{tuple_delimiter}TIRUZIA{tuple_delimiter}GEO{tuple_delimiter}Capital of Firuzabad where the Aurelians were being held)
+("entity"{tuple_delimiter}JAUNDICE{tuple_delimiter}SYMPTOM{tuple_delimiter}Yellowing of the skin and eyes due to bile duct obstruction by a tumor)  
 {record_delimiter}
-("entity"{tuple_delimiter}KROHAARA{tuple_delimiter}GEO{tuple_delimiter}Capital city in Quintara)
+("entity"{tuple_delimiter}PRURITUS{tuple_delimiter}SYMPTOM{tuple_delimiter}Severe itching often resulting from bile salt accumulation due to bile duct obstruction)  
 {record_delimiter}
-("entity"{tuple_delimiter}CASHION{tuple_delimiter}GEO{tuple_delimiter}Capital city in Aurelia)
+("entity"{tuple_delimiter}PALE STOOLS{tuple_delimiter}SYMPTOM{tuple_delimiter}Light-colored feces, often a sign of impaired bile flow)  
 {record_delimiter}
-("entity"{tuple_delimiter}SAMUEL NAMARA{tuple_delimiter}PERSON{tuple_delimiter}Aurelian who spent time in Tiruzia's Alhamia Prison)
+("entity"{tuple_delimiter}SURGICAL RESECTION{tuple_delimiter}TREATMENT{tuple_delimiter}Surgery to remove the affected portion of the bile duct, often the first-line curative option)  
 {record_delimiter}
-("entity"{tuple_delimiter}ALHAMIA PRISON{tuple_delimiter}GEO{tuple_delimiter}Prison in Tiruzia)
+("entity"{tuple_delimiter}LIVER TRANSPLANTATION{tuple_delimiter}TREATMENT{tuple_delimiter}A potential treatment for early-stage bile duct cancer in specific anatomical and clinical contexts)  
 {record_delimiter}
-("entity"{tuple_delimiter}DURKE BATAGLANI{tuple_delimiter}PERSON{tuple_delimiter}Aurelian journalist who was held hostage)
+("entity"{tuple_delimiter}ADJUVANT CHEMOTHERAPY{tuple_delimiter}TREATMENT{tuple_delimiter}Post-surgical chemotherapy aimed at reducing recurrence risk)  
 {record_delimiter}
-("entity"{tuple_delimiter}MEGGIE TAZBAH{tuple_delimiter}PERSON{tuple_delimiter}Bratinas national and environmentalist who was held hostage)
+("entity"{tuple_delimiter}AVOIDING LIVER FLUKE EXPOSURE{tuple_delimiter}PREVENTATIVE-MEASURE{tuple_delimiter}Public health intervention in endemic areas to reduce risk of cholangiocarcinoma)  
 {record_delimiter}
-("relationship"{tuple_delimiter}FIRUZABAD{tuple_delimiter}AURELIA{tuple_delimiter}Firuzabad negotiated a hostage exchange with Aurelia{tuple_delimiter}2)
+("entity"{tuple_delimiter}LIVER DISEASE MANAGEMENT{tuple_delimiter}PREVENTATIVE-MEASURE{tuple_delimiter}Controlling underlying liver disease to reduce progression to bile duct cancer)  
 {record_delimiter}
-("relationship"{tuple_delimiter}QUINTARA{tuple_delimiter}AURELIA{tuple_delimiter}Quintara brokered the hostage exchange between Firuzabad and Aurelia{tuple_delimiter}2)
+("relationship"{tuple_delimiter}PRIMARY SCLEROSING CHOLANGITIS{tuple_delimiter}BILE DUCT CANCER{tuple_delimiter}This chronic inflammatory condition is a major risk factor for cholangiocarcinoma{tuple_delimiter}9)  
 {record_delimiter}
-("relationship"{tuple_delimiter}QUINTARA{tuple_delimiter}FIRUZABAD{tuple_delimiter}Quintara brokered the hostage exchange between Firuzabad and Aurelia{tuple_delimiter}2)
+("relationship"{tuple_delimiter}LIVER FLUKE INFECTIONS{tuple_delimiter}BILE DUCT CANCER{tuple_delimiter}Parasitic liver flukes can cause direct damage that leads to malignant transformation{tuple_delimiter}9)  
 {record_delimiter}
-("relationship"{tuple_delimiter}SAMUEL NAMARA{tuple_delimiter}ALHAMIA PRISON{tuple_delimiter}Samuel Namara was a prisoner at Alhamia prison{tuple_delimiter}8)
+("relationship"{tuple_delimiter}JAUNDICE{tuple_delimiter}BILE DUCT CANCER{tuple_delimiter}Jaundice is often the first symptom of bile duct obstruction due to tumor growth{tuple_delimiter}8)  
 {record_delimiter}
-("relationship"{tuple_delimiter}SAMUEL NAMARA{tuple_delimiter}MEGGIE TAZBAH{tuple_delimiter}Samuel Namara and Meggie Tazbah were exchanged in the same hostage release{tuple_delimiter}2)
+("relationship"{tuple_delimiter}SURGICAL RESECTION{tuple_delimiter}BILE DUCT CANCER{tuple_delimiter}Surgical removal of tumors is the primary treatment for localized disease{tuple_delimiter}8)  
 {record_delimiter}
-("relationship"{tuple_delimiter}SAMUEL NAMARA{tuple_delimiter}DURKE BATAGLANI{tuple_delimiter}Samuel Namara and Durke Bataglani were exchanged in the same hostage release{tuple_delimiter}2)
+("relationship"{tuple_delimiter}LIVER TRANSPLANTATION{tuple_delimiter}BILE DUCT CANCER{tuple_delimiter}Transplantation is an option in selected patients with early-stage disease{tuple_delimiter}7)  
 {record_delimiter}
-("relationship"{tuple_delimiter}MEGGIE TAZBAH{tuple_delimiter}DURKE BATAGLANI{tuple_delimiter}Meggie Tazbah and Durke Bataglani were exchanged in the same hostage release{tuple_delimiter}2)
+("relationship"{tuple_delimiter}AVOIDING LIVER FLUKE EXPOSURE{tuple_delimiter}LIVER FLUKE INFECTIONS{tuple_delimiter}Prevention of infection helps reduce downstream cancer risk{tuple_delimiter}8)  
 {record_delimiter}
-("relationship"{tuple_delimiter}SAMUEL NAMARA{tuple_delimiter}FIRUZABAD{tuple_delimiter}Samuel Namara was a hostage in Firuzabad{tuple_delimiter}2)
-{record_delimiter}
-("relationship"{tuple_delimiter}MEGGIE TAZBAH{tuple_delimiter}FIRUZABAD{tuple_delimiter}Meggie Tazbah was a hostage in Firuzabad{tuple_delimiter}2)
-{record_delimiter}
-("relationship"{tuple_delimiter}DURKE BATAGLANI{tuple_delimiter}FIRUZABAD{tuple_delimiter}Durke Bataglani was a hostage in Firuzabad{tuple_delimiter}2)
+("relationship"{tuple_delimiter}LIVER DISEASE MANAGEMENT{tuple_delimiter}CHRONIC LIVER DISEASE{tuple_delimiter}Managing chronic liver disease reduces the progression to bile duct malignancy{tuple_delimiter}7)  
 {completion_delimiter}
 
 ######################
