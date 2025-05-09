@@ -5,6 +5,16 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import argparse
 from tqdm import tqdm
+import nltk
+from nltk.tokenize import sent_tokenize
+
+# Download the punkt tokenizer if not already present
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
+
+nltk.download('punkt_tab')
 
 load_dotenv()
 
@@ -14,32 +24,21 @@ def get_random_chunks(file_path, num_chunks=3):
         with open(file_path, 'r', encoding='utf-8') as file:
             text = file.read()
         
-        # Simple sentence splitting using periods, question marks, and exclamation points
-        # This is a simplified approach compared to NLTK
-        sentences = []
-        for raw_sentence in text.split('.'):
-            # Further split by ! and ?
-            for s in raw_sentence.split('!'):
-                for s2 in s.split('?'):
-                    if s2.strip():
-                        sentences.append(s2.strip() + '.')
+        # Use NLTK's sentence tokenizer for better sentence splitting
+        sentences = sent_tokenize(text)
         
-        # Remove empty sentences
-        sentences = [s for s in sentences if s.strip()]
+        sentences = [s.strip() for s in sentences if s.strip()]
         
-        # If not enough sentences, return the whole text
         if len(sentences) <= 3:
             return [text]
         
         chunks = []
         for _ in range(num_chunks):
-            # Select a random starting point, leaving room for 3 sentences
             if len(sentences) <= 3:
                 start_idx = 0
             else:
-                start_idx = random.randint(0, len(sentences) - 3)
+                start_idx = random.randint(0, max(0, len(sentences) - 3))
             
-            # Create a chunk of approximately 3 sentences
             chunk = ' '.join(sentences[start_idx:start_idx + 3])
             chunks.append(chunk)
         
