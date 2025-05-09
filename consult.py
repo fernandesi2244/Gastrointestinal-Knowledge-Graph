@@ -1,15 +1,11 @@
 import subprocess
 from typing import List
 from dataclasses import dataclass
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
-from huggingface_hub import login
-import torch
+from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
-LLAMA4_MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MAX_LENGTH = 2048
+MODEL_ID = "gpt-4.1-nano"
 TEMPERATURE = 0.2 # TODO: prob experiment with this a bit
 
 SYSTEM_PROMPT = """You are a highly skilled medical assistant specializing in gastrointestinal cancers.
@@ -27,9 +23,9 @@ When responding:
 4. Suggest relevant questions the patient might not have thought to ask
 5. Always clarify that you are an AI assistant and recommend consulting with healthcare professionals
 
-For any questions requiring knowledge retrieval, you'll use GraphRAG:
-- For general/aggregate information about gastrointestinal cancers, use the GLOBAL search option
-- For specific details about particular cancers/conditions, use the LOCAL search option
+For any questions requiring knowledge retrieval, primarily use the output from the medical database.
+This is important, as a complicated procedure has been set up to query the relevant information from the
+database for you. The database is a comprehensive resource for gastrointestinal cancers.
 
 Remember to never make up information. If you're unsure, acknowledge your limitations and suggest 
 consulting with a healthcare professional."""
@@ -40,18 +36,17 @@ class Message:
     content: str
 
 class GICancerChatbot:
-    def __init__(self):        
-        self.tokenizer = AutoTokenizer.from_pretrained(LLAMA4_MODEL_ID)
-        self.model = AutoModelForCausalLM.from_pretrained(
-            LLAMA4_MODEL_ID,
-            torch_dtype=torch.float16 if DEVICE == "cuda" else torch.float32,
-            device_map="auto" if DEVICE == "cuda" else None
-        )
+    def __init__(self):
+        load_dotenv()
+        api_key = os.getenv('GRAPHRAG_API_KEY')
+        if api_key is None:
+            raise ValueError("GRAPHRAG_API_KEY not found in environment variables.")
         
+        self.client = OpenAI(api_key=api_key)
         self.chat_history: List[Message] = []
-        print("Model loaded successfully. Starting chat session...")
+        print("OpenAI client initialized successfully. Starting chat session...")
         
-    def format_chat_history(self) -> str:
+    def format_chat_history(self):
         formatted_messages = []
         
         formatted_messages.append({"role": "system", "content": SYSTEM_PROMPT})
@@ -67,9 +62,14 @@ class GICancerChatbot:
             {"role": "user", "content": f"Determine the appropriate search type for this query about gastrointestinal cancer: '{query}'"}
         ]
         
-        inputs = self.tokenizer.apply_chat_template(decision_prompt, return_tensors="pt").to(DEVICE)
-        outputs = self.model.generate(inputs, max_length=MAX_LENGTH, temperature=0.1, top_p=0.9)
-        decision = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        response = self.client.chat.completions.create(
+            model=MODEL_ID,
+            messages=decision_prompt,
+            temperature=0.0,
+            max_tokens=10
+        )
+        
+        decision = response.choices[0].message.content.strip()
         
         if "GLOBAL" in decision.upper():
             return "global"
@@ -91,36 +91,34 @@ class GICancerChatbot:
         self.chat_history.append(Message(role="user", content=user_input))
         
         search_type = self.determine_search_type(user_input)
+        print('Determined search type:', search_type)
         
         graphrag_response = self.query_graphrag(user_input, search_type)
+        print('Got response from GraphRAG')
         
         self.chat_history.append(Message(role="system", content=f"Here's information from the medical database: {graphrag_response}"))
         
         formatted_messages = self.format_chat_history()
         
-        inputs = self.tokenizer.apply_chat_template(formatted_messages, return_tensors="pt").to(DEVICE)
-        outputs = self.model.generate(
-            inputs, 
-            max_length=MAX_LENGTH, 
-            temperature=TEMPERATURE,
+        response = self.client.chat.completions.create(
+            model=MODEL_ID,
+            messages=formatted_messages,
+            temperature=TEMPERATURE
         )
-        response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         
-        # Extract assistant's response (everything after the prompt)
-        # TODO: see if this is robust enough
-        print('Response from LLAMA:', response)
-        response = response.split("Here's information from the medical database:")[-1].split("Assistant:")[-1].strip()
+        assistant_response = response.choices[0].message.content
+        print('Got response from OpenAI')
         
-        self.chat_history.append(Message(role="assistant", content=response))
+        self.chat_history.append(Message(role="assistant", content=assistant_response))
         
-        return response
+        return assistant_response
     
     def run_cli(self):
         print("Type 'quit' or 'exit' to end the conversation.\n")
         
         while True:
             user_input = input("\n👤 You: ")
-            if user_input.lower() in ["quit", "exit", "q"]:
+            if user_input.lower() in ["quit", "exit", "q", "stop"]:
                 print("\nThank you for using the GI Cancer Chatbot. Take care!")
                 break
                 
@@ -130,13 +128,6 @@ class GICancerChatbot:
 
 def main():
     load_dotenv()
-    access_token = os.getenv('HUGGING_FACE_ACCESS_TOKEN')
-    print('Access token:', access_token)
-    if access_token is None:
-        print("Error: HUGGING_FACE_ACCESS_TOKEN not found in environment variables.")
-        return
-    login(token=access_token)
-    
     chatbot = GICancerChatbot()
     chatbot.run_cli()
 
